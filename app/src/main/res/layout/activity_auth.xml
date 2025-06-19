@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="#F9FAFB"
+    android:fitsSystemWindows="true"
+    android:layout_marginTop="?attr/actionBarSize">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ecffff">
+
+        <!-- Ocean Gradient Header with Rounded Bottom -->
+        <View
+            android:id="@+id/header_background"
+            android:layout_width="match_parent"
+            android:layout_height="240dp"
+            android:background="@drawable/activity_splash_background"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Logo Container -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/logo_container"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginTop="60dp"
+            android:backgroundTint="@color/white"
+            app:cardCornerRadius="32dp"
+            app:cardElevation="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_location"
+                    app:tint="#0891B2" />
+            </FrameLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Welcome Text -->
+        <TextView
+            android:id="@+id/welcome_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/poppins_semibold"
+            android:text="Welcome Back"
+            android:textColor="#FFFFFF"
+            android:textSize="25sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/logo_container" />
+
+        <!-- Subtitle -->
+        <TextView
+            android:id="@+id/welcome_subtitle_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+
+            android:fontFamily="@font/montserrat_medium"
+            android:layout_marginBottom="15dp"
+            android:gravity="center"
+            android:text="Sign in to access BeachBuddy"
+            android:textColor="#CCFFFFFF"
+            android:textSize="17sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/welcome_text" />
+
+        <!-- Form Container Card -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/form_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:backgroundTint="@color/white"
+            android:layout_marginTop="-20dp"
+            android:layout_marginEnd="24dp"
+            app:cardCornerRadius="30dp"
+            app:cardElevation="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/header_background">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                >
+
+                <!-- Tab Layout for Login/Signup -->
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tab_selector"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#ffffff"
+                    app:tabBackground="@drawable/tab_selector"
+                    app:tabIndicatorHeight="0dp"
+                    android:layout_marginTop="24dp"
+                    app:tabMode="fixed"
+                    app:tabTextAppearance="@style/CustomTabTextAppearance"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
+                    app:tabRippleColor="@null"
+                    app:tabSelectedTextColor="#FFFFFF"
+                    app:tabTextColor="#666666"/>
+
+
+                <!-- ViewPager for Login/Signup Forms -->
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/view_pager"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+
+                    />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

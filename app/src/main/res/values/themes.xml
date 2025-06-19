@@ -1,0 +1,36 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.BeachBuddy" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:statusBarColor" >#1e40af</item>
+    </style>
+
+    <style name="Theme.BeachBuddy" parent="Base.Theme.BeachBuddy" />
+
+    <style name="TextInputLayoutStyle" parent="ThemeOverlay.Material3.TextInputEditText.OutlinedBox.Dense">
+        <item name="boxStrokeColor">#ffffff</item>
+        <item name="boxStrokeWidth">0dp</item>
+    </style>
+
+    <style name="CustomTabTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">13sp</item>
+        <item name="android:fontFamily">@font/poppins_semibold</item>
+    </style>
+
+    <!-- Active item text style -->
+    <style name="TextAppearance.BottomNavigation.Active" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="fontFamily">@font/montserrat_semibold</item>
+        <item name="android:fontFamily">@font/montserrat_semibold</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <!-- Inactive item text style -->
+    <style name="TextAppearance.BottomNavigation.Inactive" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="fontFamily">@font/montserrat_medium</item>
+        <item name="android:fontFamily">@font/montserrat_medium</item>
+        <item name="android:textStyle">normal</item> <!-- or "italic" -->
+        <item name="android:textSize">12sp</item>
+    </style>
+</resources>

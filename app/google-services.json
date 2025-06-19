@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "329780737845",
+    "project_id": "beachbuddy-6048d",
+    "storage_bucket": "beachbuddy-6048d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:329780737845:android:791609978494af57b83e7c",
+        "android_client_info": {
+          "package_name": "com.example.beachbuddy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "329780737845-jbkoithclq8v4sna6rv7hagghc2s7ovu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.beachbuddy",
+            "certificate_hash": "68abdd46570b7a8af74e5a6037595ae65abd361a"
+          }
+        },
+        {
+          "client_id": "329780737845-sm54fgpogimt8duljc3r1n7aljgu8dct.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9-Dj1JWKBdVJn8ldiIyZgj6t7c6y9Xxc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "329780737845-sm54fgpogimt8duljc3r1n7aljgu8dct.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
