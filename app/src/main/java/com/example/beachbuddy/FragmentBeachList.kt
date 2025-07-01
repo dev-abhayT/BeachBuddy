@@ -9,6 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.setPadding
 import androidx.fragment.app.Fragment
@@ -16,10 +18,12 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.room.Room
 import com.example.beachbuddy.adapters.BeachCardAdapter
 import com.example.beachbuddy.adapters.OnBeachClickListener
 import com.example.beachbuddy.backend.BeachRepository
 import com.example.beachbuddy.data.Beach
+import com.example.beachbuddy.data.room.BeachLocalDB
 import com.example.beachbuddy.databinding.FragmentListViewBinding
 import com.example.beachbuddy.interfaces.FourSquareServices
 import com.example.beachbuddy.interfaces.MarineWeatherAPIService
@@ -27,6 +31,8 @@ import com.example.beachbuddy.viewModels.BeachViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -62,13 +68,32 @@ class FragmentBeachList : Fragment(), OnBeachClickListener {
         super.onViewCreated(view, savedInstanceState)
 
         requireActivity().findViewById<BottomNavigationView>(R.id.home_screen_bottom_nav)?.let{ nav ->
-            binding.beachRecyclerView.post {
+            binding.recyclerViewParent.post {
                 val height = nav.height
-                binding.beachRecyclerView.setPadding(binding.beachRecyclerView.paddingLeft,binding.beachRecyclerView.paddingTop,binding.beachRecyclerView.paddingRight,height)
+                binding.recyclerViewParent.setPadding(binding.recyclerViewParent.paddingLeft,binding.recyclerViewParent.paddingTop,binding.recyclerViewParent.paddingRight,height)
             }
 
 
         }
+
+        ViewCompat.setOnApplyWindowInsetsListener(
+            binding.beachRecyclerView
+        ) { v, insets ->
+            val innerPadding = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars()
+                        or WindowInsetsCompat.Type.displayCutout()
+                // If using EditText, also add
+                // "or WindowInsetsCompat.Type.ime()" to
+                // maintain focus when opening the IME
+            )
+            v.setPadding(
+                innerPadding.left,
+                innerPadding.top,
+                innerPadding.right,
+                innerPadding.bottom)
+            insets
+        }
+
 
         setupRecyclerView()
         //setupRepository()
@@ -166,6 +191,17 @@ class FragmentBeachList : Fragment(), OnBeachClickListener {
     }
 
     private fun loadNearbyBeaches(latitude: Double, longitude: Double) {
+        val db = Room.databaseBuilder(requireContext(), BeachLocalDB::class.java, "beach_db").build()
+        CoroutineScope(Dispatchers.Main).launch {
+            try{
+                val beachList = db.beachDAO().getAllBeaches()
+                Log.e(TAG,"${beachList.size} beaches found in Room DB")
+            }catch (e:Exception){
+                Log.e(TAG,"${e.message}: Room Database Error")
+            }
+
+        }
+
 
         try{
             showLoading(true)

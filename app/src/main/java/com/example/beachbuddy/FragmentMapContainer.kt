@@ -1,7 +1,6 @@
 package com.example.beachbuddy
 
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
@@ -14,8 +13,11 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.room.Room
 import com.example.beachbuddy.backend.BeachRepository
 import com.example.beachbuddy.data.Beach
+import com.example.beachbuddy.data.room.BeachEntity
+import com.example.beachbuddy.data.room.BeachLocalDB
 import com.example.beachbuddy.databinding.FragmentMapBinding
 import com.example.beachbuddy.interfaces.FourSquareServices
 import com.example.beachbuddy.interfaces.MarineWeatherAPIService
@@ -26,11 +28,9 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.AdvancedMarkerOptions
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.PinConfig
 //import com.google.android.libraries.maps.CameraUpdateFactory
 //import com.google.android.libraries.maps.GoogleMap
 //import com.google.android.libraries.maps.OnMapReadyCallback
@@ -50,13 +50,14 @@ class FragmentMapContainer : Fragment(), OnMapReadyCallback {
 
     private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
+//    private lateinit var firestore : FirebaseFirestore
     private val beachViewModel: BeachViewModel by activityViewModels()
     private lateinit var googleMap: GoogleMap
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var repository: BeachRepository
     private val beaches = mutableListOf<Beach>()
 
-    private val defaultLocation = LatLng(19.19, 72.86)
+//    private val defaultLocation = LatLng(19.19, 72.86)
 
     companion object {
         private const val TAG = "FRAGMENT_MAP_CONTAINER"
@@ -69,7 +70,7 @@ class FragmentMapContainer : Fragment(), OnMapReadyCallback {
             getCurrentLocationAndFetchBeaches()
         } else {
             Toast.makeText(requireContext(), "Location Permission Denied", Toast.LENGTH_SHORT).show()
-            moveToDefaultLocation()
+            Log.e(TAG,"Location Permission Denied")
         }
     }
 
@@ -89,6 +90,10 @@ class FragmentMapContainer : Fragment(), OnMapReadyCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+//        val emailSharedPrefs = requireActivity().getSharedPreferences("UserEmail", MODE_PRIVATE)
+//        val email = emailSharedPrefs.getString("userEmail","")
+//
+//        firestore = FirebaseFirestore.getInstance()
 
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
@@ -161,19 +166,19 @@ class FragmentMapContainer : Fragment(), OnMapReadyCallback {
                 fetchNearbyBeaches(location.latitude, location.longitude)
             } else {
                 Toast.makeText(requireContext(), "Couldn't access location. Showing default.", Toast.LENGTH_SHORT).show()
-                moveToDefaultLocation()
+                Log.e(TAG, "Couldn't access location.")
             }
         }.addOnFailureListener {
             Log.e(TAG, "Location failure: ${it.message}")
             Toast.makeText(requireContext(), "Failed to get location", Toast.LENGTH_SHORT).show()
-            moveToDefaultLocation()
+            Log.e(TAG,"Failed to get location")
         }
     }
 
-    private fun moveToDefaultLocation() {
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, 12f))
-        fetchNearbyBeaches(defaultLocation.latitude, defaultLocation.longitude)
-    }
+//    private fun moveToDefaultLocation() {
+//        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, 12f))
+//        fetchNearbyBeaches(defaultLocation.latitude, defaultLocation.longitude)
+//    }
 
     private fun fetchNearbyBeaches(latitude: Double, longitude: Double) {
         // Init Retrofit only once if needed
@@ -197,9 +202,15 @@ class FragmentMapContainer : Fragment(), OnMapReadyCallback {
                 val beachList = repository.getBeaches(latitude, longitude)
                 beaches.clear()
                 beaches.addAll(beachList)
+                val db = Room.databaseBuilder(requireContext(), BeachLocalDB::class.java, "beach_db").build()
+
+                beaches.forEach{ beach ->
+                    val beachEntity = BeachEntity(beach.id, beach.name, beach.latitude, beach.longitude, beach.safetyStatus)
+                    db.beachDAO().insertBeach(beachEntity)
+                }
                 beachViewModel.setBeaches(beachList)
                 updateMap(beaches)
-                Log.d(TAG, "${beaches.size} beaches loaded")
+                Log.e(TAG,"${beaches.size} beaches found")
             } catch (e: Exception) {
                 showLoadingOverlay(false)
                 Log.e(TAG, "Failed to load beaches: ${e.message}")
@@ -214,16 +225,7 @@ class FragmentMapContainer : Fragment(), OnMapReadyCallback {
         googleMap.clear()
         beachList.forEach { beach ->
             val beachLoc = LatLng(beach.latitude, beach.longitude)
-//            val pinConfigBuilder : PinConfig.Builder = PinConfig.builder()
-//            pinConfigBuilder.setBackgroundColor(-15681151)
-//            //pinConfigBuilder.setBackgroundColor(Color.parseColor(beach.safetyStatus.color))
-//            Log.e(TAG,"${Color.parseColor(beach.safetyStatus.color)}")
-//            //pinConfigBuilder.setBorderColor(Color.parseColor(beach.safetyStatus.color))
-//            pinConfigBuilder.setBorderColor(-15681151)
-//            val pinConfig : PinConfig = pinConfigBuilder.build()
             val marker = MarkerOptions().position(beachLoc).title(beach.name)
-
-
             when(beach.safetyStatus.displayName){
                 "Safe" -> marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
                 "Caution" -> marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW))
@@ -234,8 +236,6 @@ class FragmentMapContainer : Fragment(), OnMapReadyCallback {
             googleMap.addMarker(marker)
         }
     }
-
-    fun getBeaches(): List<Beach> = beaches
 
     fun showLoadingOverlay(show:Boolean){
         binding.loadingOverlay.isVisible=show

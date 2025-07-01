@@ -1,7 +1,6 @@
 package com.example.beachbuddy.interfaces
 
 import com.example.beachbuddy.BuildConfig
-import com.example.beachbuddy.data.FourSquarePhotos
 import com.example.beachbuddy.data.FourSquareResponse
 import retrofit2.Response
 import retrofit2.http.GET
@@ -20,17 +19,17 @@ interface FourSquareServices {
     suspend fun getNearbyBeaches(
         @Query("query") name: String = "beaches",
         @Query("ll") location: String,
-        @Query("radius") radius: Int = 50000,
+        @Query("radius") radius: Int = 100000,
         @Query("fsq_category_ids") categories: String = "4bf58dd8d48988d1e2941735",
-        @Query("limit") limit: Int = 10
+        @Query("limit") limit: Int = 15
     ): FourSquareResponse
 
-    @GET("photos")
-    suspend fun getPhotos(
-        @Query("limit") limit: Int = 1,
-        @Query("classifications") category: String = "outdoor",
-        @Header("Authorization") apiKey: String = BuildConfig.FSQ_OLD_API_KEY
-
-    ): List<FourSquarePhotos>
+//    @GET("photos")
+//    suspend fun getPhotos(
+//        @Query("limit") limit: Int = 1,
+//        @Query("classifications") category: String = "outdoor",
+//        @Header("Authorization") apiKey: String = BuildConfig.FSQ_OLD_API_KEY
+//
+//    ): List<FourSquarePhotos>
 }
 

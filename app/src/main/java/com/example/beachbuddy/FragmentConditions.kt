@@ -83,9 +83,10 @@ class FragmentConditions : Fragment() {
 //                    binding.nextHighTide.text = highTideTime
 //                    binding.nextHighTideTip.text = getDetails.getTimeDifferenceFromNow(highTideTime)
 //                    binding.nextLowTide.text = getDetails.getTideInfo("Low Tide")
-                    binding.uvCardBg.backgroundTintList= ColorStateList.valueOf(Color.parseColor(uvClassify.color))
+
 
                     binding.uvStatus.text=uvClassify.displayName
+                    binding.uvStatus.setTextColor(ColorStateList.valueOf(Color.parseColor(uvClassify.color)))
                     binding.uvIndexTip.text=uvClassify.tip
 
 

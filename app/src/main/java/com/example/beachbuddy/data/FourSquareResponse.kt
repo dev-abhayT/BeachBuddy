@@ -7,17 +7,19 @@ data class FourSquareResponse(
     val results: List<BeachLocation>
 )
 
-data class FourSquarePhotos(
-    @SerializedName("prefix")
-    val prefix: String,
-    @SerializedName("suffix")
-    val suffix: String
-)
+//data class FourSquarePhotos(
+//    @SerializedName("prefix")
+//    val prefix: String,
+//    @SerializedName("suffix")
+//    val suffix: String
+//)
 
 
 data class BeachLocation(
     @SerializedName("fsq_place_id")
     val fsq_id: String,
+    @SerializedName("categories")
+    val categories: List<Category>,
     @SerializedName("latitude")
     val latitude: Double,
     @SerializedName("longitude")
@@ -26,6 +28,17 @@ data class BeachLocation(
     val location: Location,
     @SerializedName("name")
     val name: String
+)
+data class Category(
+    @SerializedName("icon")
+    val icon: Icon
+)
+
+data class Icon(
+    @SerializedName("prefix")
+    val prefix: String,
+    @SerializedName("suffix")
+    val suffix: String
 )
 
 

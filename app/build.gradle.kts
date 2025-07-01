@@ -46,11 +46,13 @@ android {
             val fsqApiKey = getLocalProperty("FSQ_API_KEY")
             val fsqOldApiKey = getLocalProperty("FSQ_OLD_API_KEY")
             val geminiApiKey = getLocalProperty("GEMINI_API_KEY")
+            val unsplashApiKey = getLocalProperty("UNSPLASH_API_KEY")
             buildConfigField("String","FSQ_OLD_API_KEY", "\"$fsqOldApiKey\"")
             buildConfigField("String", "GO_MAPS_API_KEY", "\"$goApiKey\"")
             buildConfigField("String", "GOOGLE_MAPS_API_KEY", "\"$apiKey\"")
             buildConfigField("String", "FSQ_API_KEY", "\"$fsqApiKey\"")
             buildConfigField("String", "GEMINI_API_KEY", "\"$geminiApiKey\"")
+            buildConfigField("String", "UNSPLASH_API_KEY", "\"$unsplashApiKey\"")
             manifestPlaceholders["GOOGLE_MAPS_API_KEY"] = getLocalProperty("GOOGLE_MAPS_API_KEY")
             isDebuggable = true
         }
@@ -60,11 +62,13 @@ android {
             val fsqApiKey = getLocalProperty("FSQ_API_KEY")
             val fsqOldApiKey = getLocalProperty("FSQ_OLD_API_KEY")
             val geminiApiKey = getLocalProperty("GEMINI_API_KEY")
+            val unsplashApiKey = getLocalProperty("UNSPLASH_API_KEY")
             buildConfigField("String","FSQ_OLD_API_KEY", "\"$fsqOldApiKey\"")
             buildConfigField("String", "GO_MAPS_API_KEY", "\"$goApiKey\"")
             buildConfigField("String", "GOOGLE_MAPS_API_KEY", "\"$apiKey\"")
             buildConfigField("String", "FSQ_API_KEY", "\"$fsqApiKey\"")
             buildConfigField("String", "GEMINI_API_KEY", "\"$geminiApiKey\"")
+            buildConfigField("String", "UNSPLASH_API_KEY", "\"$unsplashApiKey\"")
             manifestPlaceholders["GOOGLE_MAPS_API_KEY"] = getLocalProperty("GOOGLE_MAPS_API_KEY")
 
             isMinifyEnabled = true
@@ -131,6 +135,9 @@ dependencies {
 
     //Gemini
     implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
+
+    //Android Core Library for notifications
+    implementation("androidx.core:core-ktx:1.16.0")
 
 
     implementation(libs.androidx.core.ktx)

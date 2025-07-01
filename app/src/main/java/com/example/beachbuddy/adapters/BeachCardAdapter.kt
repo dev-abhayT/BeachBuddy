@@ -4,6 +4,7 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.beachbuddy.R
@@ -36,8 +37,12 @@ class BeachCardAdapter(private var listener: OnBeachClickListener? = null) : Rec
             with(binding) {
                 beachName.text = beach.name
 //                beachDistance.text = "${beach.distance}s from your location"
-                statusReason.text = beach.safetyReason
-                statusText.text = beach.safetyStatus.displayName
+//                statusReason.text = beach.safetyReason
+//                statusText.text = beach.safetyStatus.displayName
+                beachSafetyStatus.text = beach.safetyStatus.displayName
+                beachSafetyStatus.setTextColor(ColorStateList.valueOf(Color.parseColor(beach.safetyStatus.color)))
+                beachSafetyStatus.isVisible = false
+                beachCardView.backgroundTintList = ColorStateList.valueOf(Color.parseColor(beach.safetyStatus.bgColor))
                 beachAddress.text = beach.address
 
                 Glide.with(itemView.context)
@@ -48,11 +53,11 @@ class BeachCardAdapter(private var listener: OnBeachClickListener? = null) : Rec
 
                 // Set safety status color
                 val statusColor = Color.parseColor(beach.safetyStatus.color)
-                beachStatusCard.backgroundTintList = ColorStateList.valueOf(statusColor)
-                statusReason.setTextColor(ColorStateList.valueOf(Color.parseColor(beach.safetyStatus.color)))
+//                beachStatusCard.backgroundTintList = ColorStateList.valueOf(statusColor)
+//                statusReason.setTextColor(ColorStateList.valueOf(Color.parseColor(beach.safetyStatus.color)))
 
                 val bgColor = Color.parseColor(beach.safetyStatus.bgColor)
-                safetyReasonBg.backgroundTintList = ColorStateList.valueOf(bgColor)
+//                safetyReasonBg.backgroundTintList = ColorStateList.valueOf(bgColor)
 
 //                statusReason.setTextColor(statusColor)
 

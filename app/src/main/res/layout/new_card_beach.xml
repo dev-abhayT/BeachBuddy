@@ -4,12 +4,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:id="@+id/beach_card_view"
     android:layout_margin="10dp"
     app:cardCornerRadius="16dp"
     app:cardElevation="10dp"
+
     android:backgroundTint="@color/white"
-    app:strokeColor="@color/teal"
-    app:strokeWidth="2dp"
+    app:strokeWidth="0dp"
     android:foreground="?android:attr/selectableItemBackground">
 
     <LinearLayout
@@ -28,33 +29,33 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
-                android:src="@drawable/ic_google" />
+                android:src="@drawable/activity_splash_background" />
 
-            <!-- Status Badge -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/beach_status_card"
-                app:strokeColor="@color/black"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="top|end"
-                android:layout_margin="12dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="2dp">
+<!--            &lt;!&ndash; Status Badge &ndash;&gt;-->
+<!--            <com.google.android.material.card.MaterialCardView-->
+<!--                android:id="@+id/beach_status_card"-->
+<!--                app:strokeColor="@color/black"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="top|end"-->
+<!--                android:layout_margin="12dp"-->
+<!--                app:cardCornerRadius="12dp"-->
+<!--                app:cardElevation="2dp">-->
 
-                <TextView
-                    android:id="@+id/status_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:fontFamily="@font/montserrat_medium"
-                    android:paddingStart="12dp"
-                    android:paddingTop="6dp"
-                    android:paddingEnd="12dp"
-                    android:paddingBottom="6dp"
-                    android:text="Safe"
-                    android:textColor="#FFFFFF"
-                    android:textSize="12sp" />
-            </com.google.android.material.card.MaterialCardView>
+<!--                <TextView-->
+<!--                    android:id="@+id/status_text"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:textStyle="bold"-->
+<!--                    android:fontFamily="@font/montserrat_medium"-->
+<!--                    android:paddingStart="12dp"-->
+<!--                    android:paddingTop="6dp"-->
+<!--                    android:paddingEnd="12dp"-->
+<!--                    android:paddingBottom="6dp"-->
+<!--                    android:text="Safe"-->
+<!--                    android:textColor="#FFFFFF"-->
+<!--                    android:textSize="12sp" />-->
+<!--            </com.google.android.material.card.MaterialCardView>-->
 
 <!--            &lt;!&ndash; Favorite Heart &ndash;&gt;-->
 <!--            <ImageView-->
@@ -89,30 +90,39 @@
                     android:layout_weight="1"
                     android:orientation="vertical"
                     android:gravity="center">
-
-                    <!-- Status Reason -->
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/safety_reason_bg"
+                    <TextView
+                        android:id="@+id/beach_safety_status"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        app:cardCornerRadius="12dp"
-                        app:cardElevation="0dp"
-                        app:strokeColor="@color/black">
+                        android:fontFamily="@font/montserrat_bold"
+                        android:textColor="#000000"
+                        android:text="SAFE"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
 
-                        <TextView
-                            android:id="@+id/status_reason"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/montserrat_semibold"
-                            android:paddingStart="8dp"
-                            android:paddingTop="4dp"
-                            android:paddingEnd="8dp"
-                            android:paddingBottom="4dp"
-                            android:text="All conditions favorable"
-                            android:textColor="@color/white"
-                            android:textSize="13sp" />
-                    </com.google.android.material.card.MaterialCardView>
+<!--                    &lt;!&ndash; Status Reason &ndash;&gt;-->
+<!--                    <com.google.android.material.card.MaterialCardView-->
+<!--                        android:id="@+id/safety_reason_bg"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_gravity="center_horizontal"-->
+<!--                        app:cardCornerRadius="12dp"-->
+<!--                        app:cardElevation="0dp"-->
+<!--                        app:strokeColor="@color/black">-->
+
+<!--                        <TextView-->
+<!--                            android:id="@+id/status_reason"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:fontFamily="@font/montserrat_semibold"-->
+<!--                            android:paddingStart="8dp"-->
+<!--                            android:paddingTop="4dp"-->
+<!--                            android:paddingEnd="8dp"-->
+<!--                            android:paddingBottom="4dp"-->
+<!--                            android:text="All conditions favorable"-->
+<!--                            android:textColor="@color/white"-->
+<!--                            android:textSize="13sp" />-->
+<!--                    </com.google.android.material.card.MaterialCardView>-->
 
                     <TextView
                         android:id="@+id/beach_name"
@@ -163,9 +173,23 @@
                 android:ellipsize="end"
                 android:fontFamily="@font/montserrat_medium"
                 android:maxLines="2"
+                android:layout_marginBottom="8dp"
                 android:text="One of the longest urban beaches in the world, known for its pristine sands and vibrant atmosphere."
                 android:textColor="#6B7280"
                 android:textSize="12sp" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#6B7280" />
+
+            <!--Tap for more Details-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="8dp"
+                android:textColor="#6B7280"
+                android:text="•Tap for more Details•"/>
         </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

@@ -47,7 +47,7 @@ class BeachDetailsActivity : AppCompatActivity() {
 
         try{
             binding.tvBeachTitle.text=beach?.name
-            binding.tvSafetyStatus.text=beach?.safetyStatus?.displayName
+            binding.beachSafetyStatus.text=beach?.safetyStatus?.displayName
             binding.tvDistanceText.text="${beach?.address}"
             Glide.with(this)
                 .load(beach?.photoUrl)
@@ -55,7 +55,7 @@ class BeachDetailsActivity : AppCompatActivity() {
                 .error(R.drawable.activity_splash_background)
                 .into(binding.ivBeachImage)
             val color = Color.parseColor(beach?.safetyStatus?.color)
-            binding.safetyStatusBg.backgroundTintList = ColorStateList.valueOf(color)
+            binding.beachSafetyStatus.setTextColor(ColorStateList.valueOf(color))
 
             val bgColor = Color.parseColor(beach?.safetyStatus?.bgColor)
 

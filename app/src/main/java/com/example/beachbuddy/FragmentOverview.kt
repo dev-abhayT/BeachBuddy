@@ -79,9 +79,13 @@ class FragmentOverview : Fragment() {
             binding.beachWalkingStatus.text = beach.beachActivity.walking.status.label
             binding.beachSwimmingStatus.text = beach.beachActivity.swimming.status.label
             binding.beachVolleyballStatus.text = beach.beachActivity.volleyball.status.label
-            binding.beachWalkingStatusBg.backgroundTintList= ColorStateList.valueOf(Color.parseColor(beach.beachActivity.walking.status.color))
-            binding.beachSwimmingStatusBg.backgroundTintList= ColorStateList.valueOf(Color.parseColor(beach.beachActivity.swimming.status.color))
-            binding.beachVolleyballStatusBg.backgroundTintList= ColorStateList.valueOf(Color.parseColor(beach.beachActivity.volleyball.status.color))
+//            binding.beachWalkingStatusBg.backgroundTintList= ColorStateList.valueOf(Color.parseColor(beach.beachActivity.walking.status.color))
+//            binding.beachSwimmingStatusBg.backgroundTintList= ColorStateList.valueOf(Color.parseColor(beach.beachActivity.swimming.status.color))
+//            binding.beachVolleyballStatusBg.backgroundTintList= ColorStateList.valueOf(Color.parseColor(beach.beachActivity.volleyball.status.color))
+            binding.beachSwimmingStatus.setTextColor(ColorStateList.valueOf(Color.parseColor(beach.beachActivity.swimming.status.color)))
+            binding.beachWalkingStatus.setTextColor(ColorStateList.valueOf(Color.parseColor(beach.beachActivity.walking.status.color)))
+            binding.beachVolleyballStatus.setTextColor(ColorStateList.valueOf(Color.parseColor(beach.beachActivity.volleyball.status.color)))
+
 
 
                 if(beach.safetyStatus==SafetyStatus.SAFE){

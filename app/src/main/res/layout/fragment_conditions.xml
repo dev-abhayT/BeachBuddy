@@ -932,24 +932,19 @@
                                 android:textColor="#6B7280"
                                 android:textSize="12sp" />
                         </LinearLayout>
-<com.google.android.material.card.MaterialCardView
-    android:id="@+id/uv_card_bg"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
     <TextView
         android:id="@+id/uv_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#EF4444"
         android:fontFamily="@font/montserrat_bold"
         android:paddingStart="8dp"
         android:paddingTop="4dp"
         android:paddingEnd="8dp"
         android:paddingBottom="4dp"
         android:text="High"
-        android:textColor="#FFFFFF"
-        android:textSize="12sp" />
-</com.google.android.material.card.MaterialCardView>
+        android:textColor="#000000"
+        android:textSize="15sp" />
+
 
                     </LinearLayout>
                 </LinearLayout>

@@ -2,15 +2,19 @@ package com.example.beachbuddy.backend
 
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.room.Room
 import com.example.beachbuddy.BuildConfig
 import com.example.beachbuddy.data.Beach
 import com.example.beachbuddy.data.BeachLocation
 import com.example.beachbuddy.data.CurrentVariables
-import com.example.beachbuddy.data.FourSquarePhotos
+import com.example.beachbuddy.data.Icon
 import com.example.beachbuddy.data.MarineWeatherResponse
 import com.example.beachbuddy.data.SafetyStatus
+import com.example.beachbuddy.data.UnsplashResponse
+import com.example.beachbuddy.data.room.BeachEntity
 import com.example.beachbuddy.interfaces.FourSquareServices
 import com.example.beachbuddy.interfaces.MarineWeatherAPIService
+import com.example.beachbuddy.interfaces.UnsplashServices
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import kotlin.math.atan2
@@ -34,6 +38,17 @@ class BeachRepository(private val goMapsService : FourSquareServices,
         try {
             val lat = String.format("%.2f",userLat).toDouble()
             val lng = String.format("%.2f",userLng).toDouble()
+            retrofitPhoto = Retrofit.Builder()
+                .baseUrl("https://api.unsplash.com/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+            val photosApi = retrofitPhoto.create(UnsplashServices::class.java)
+            var count = 0
+
+
+
+
+            val url = photosApi.getPhotos()
 
             val location = "${lat},${lng}"
             Log.e(TAG,location)
@@ -47,31 +62,14 @@ class BeachRepository(private val goMapsService : FourSquareServices,
                     MarineWeatherResponse(CurrentVariables(0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0)).currentVariables
 
                 }
-                retrofitPhoto = Retrofit.Builder()
-                    .baseUrl("https://api.foursquare.com/v3/places/${beachLocation.fsq_id}/")
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build()
-                val photosApi = retrofitPhoto.create(FourSquareServices::class.java)
-
-
-                val photoUrl = photosApi.getPhotos(1).firstOrNull() ?: FourSquarePhotos("","")
-
-//                val gm = GenerativeModel(
-//                    modelName = "gemini-2.5-flash-preview-05-20",
-//                    apiKey = BuildConfig.GEMINI_API_KEY
-//                )
-//
-//                val prompt = "Give me only a short description in 30-35 words about $beachLocation.name} located at latitude ${beachLocation.geocodes.main.latitude} and longitude ${beachLocation.geocodes.main.longitude}."
-//                val response = gm.generateContent(prompt)
-
-
-
 
                 val distance = calculateDistance(
                     userLat, userLng,
                     beachLocation.latitude,
                     beachLocation.longitude
                 )
+                val photoUrl = url.result[count].urls.regular
+                count = count + 1
 
                 createBeachFromData(beachLocation, weatherData, distance, photoUrl, "")
 
@@ -84,7 +82,7 @@ class BeachRepository(private val goMapsService : FourSquareServices,
     }
 
     @SuppressLint("DefaultLocale")
-    private fun createBeachFromData(location: BeachLocation, weatherData: CurrentVariables?, distance: Double, photoUrl: FourSquarePhotos, modelResponse : String): Beach{
+    private fun createBeachFromData(location: BeachLocation, weatherData: CurrentVariables?, distance: Double, photoUrl: String, modelResponse : String): Beach{
         val waveHeight = weatherData?.waveHeight ?: 0.5
         //val waterTemp = weatherData?.waterTemperature ?: 24.0
         //val currentVel = weatherData?.currentVelocity ?: 0.2
@@ -96,13 +94,9 @@ class BeachRepository(private val goMapsService : FourSquareServices,
         val seaSurfaceTemperature = weatherData?.seaSurfaceTemperature ?: 24.0
         val oceanCurrentVelocity = weatherData?.oceanCurrentVelocity ?: 0.0
 
-        val url2 = photoUrl.suffix
-        val url = photoUrl.prefix + "original" + url2
-
-
+        val url = photoUrl
 
         val safetyResult = BeachClassifier(waveHeight, wavePeriod, windWaveHeight, windWavePeriod, swellWaveHeight, swellWavePeriod, seaSurfaceTemperature, oceanCurrentVelocity).classifyBeach()
-
 
         return Beach(
             id = location.fsq_id,
