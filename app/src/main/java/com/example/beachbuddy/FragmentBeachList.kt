@@ -13,6 +13,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.setPadding
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -67,30 +68,27 @@ class FragmentBeachList : Fragment(), OnBeachClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        requireActivity().findViewById<BottomNavigationView>(R.id.home_screen_bottom_nav)?.let{ nav ->
-            binding.recyclerViewParent.post {
-                val height = nav.height
-                binding.recyclerViewParent.setPadding(binding.recyclerViewParent.paddingLeft,binding.recyclerViewParent.paddingTop,binding.recyclerViewParent.paddingRight,height)
-            }
-
-
-        }
+//        requireActivity().findViewById<BottomNavigationView>(R.id.home_screen_bottom_nav)?.let{ nav ->
+//            binding.recyclerViewParent.post {
+//                val height = nav.height
+//                binding.recyclerViewParent.setPadding(binding.recyclerViewParent.paddingLeft,binding.recyclerViewParent.paddingTop,binding.recyclerViewParent.paddingRight,height)
+//            }
+//
+//
+//        }
+//        val resources = requireContext().resources
+//        val bottomNavHeight = resources.getIdentifier("navigation_bar_height", "dimen", "android")
+//        binding.recyclerViewParent.setPadding(0,0,0,bottomNavHeight)
 
         ViewCompat.setOnApplyWindowInsetsListener(
             binding.beachRecyclerView
         ) { v, insets ->
-            val innerPadding = insets.getInsets(
-                WindowInsetsCompat.Type.systemBars()
-                        or WindowInsetsCompat.Type.displayCutout()
-                // If using EditText, also add
-                // "or WindowInsetsCompat.Type.ime()" to
-                // maintain focus when opening the IME
-            )
-            v.setPadding(
-                innerPadding.left,
-                innerPadding.top,
-                innerPadding.right,
-                innerPadding.bottom)
+            val innerPadding = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val navBarInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+
+
+            v.updatePadding(bottom = innerPadding.bottom)
+
             insets
         }
 
@@ -240,7 +238,7 @@ class FragmentBeachList : Fragment(), OnBeachClickListener {
     }
 
     private fun showLoading(show: Boolean) {
-        binding.progressBar.isVisible = show
+        binding.loadingOverlay.isVisible = show
     }
 
     private fun showError(message: String) {
@@ -254,7 +252,7 @@ class FragmentBeachList : Fragment(), OnBeachClickListener {
     private fun showEmptyState(show: Boolean, latitude: Double, longitude: Double) {
         binding.emptyState.isVisible = show
         binding.nearbyText.isVisible = !show
-        binding.emptyState.text="No Beaches at ${latitude},${longitude}."
+        binding.emptyState.text="No Beaches at ${latitude},${longitude}.\n Try Setting a Location Filter"
     }
 
     override fun onBeachClick(beach: Beach) {

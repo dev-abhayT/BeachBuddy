@@ -103,25 +103,7 @@
                 android:src="@drawable/ic_google" />
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Facebook Button -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/btn_facebook"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginStart="12dp"
-            android:layout_marginEnd="12dp"
-            app:cardCornerRadius="90dp"
-            app:cardElevation="2dp"
-            app:cardBackgroundColor="@color/white"
-            app:strokeColor="@color/teal">
 
-            <ImageView
-                android:id="@+id/facebook"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_facebook" />
-        </com.google.android.material.card.MaterialCardView>
     </LinearLayout>
 
     <androidx.appcompat.widget.AppCompatButton

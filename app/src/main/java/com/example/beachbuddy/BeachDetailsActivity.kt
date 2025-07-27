@@ -3,6 +3,7 @@ package com.example.beachbuddy
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
@@ -70,6 +71,16 @@ class BeachDetailsActivity : AppCompatActivity() {
         binding.backButton.setOnClickListener {
             finish()
 
+        }
+        binding.openMaps.setOnClickListener {
+            val gmmIntentUri = Uri.parse("geo:${beach?.latitude},${beach?.longitude}?q:${beach?.latitude},${beach?.longitude}")
+            val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+            mapIntent.setPackage("com.google.android.apps.maps")
+            if (mapIntent.resolveActivity(packageManager) != null) {
+                startActivity(mapIntent)
+            } else {
+                Toast.makeText(this, "Google Maps is not installed", Toast.LENGTH_SHORT).show()
+            }
         }
 
     }

@@ -2,6 +2,7 @@ package com.example.beachbuddy
 
 import android.content.pm.PackageManager
 import android.location.Location
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 
@@ -14,14 +15,23 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.room.Room
+import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import com.example.beachbuddy.Notifications.NotificationCreator
+import com.example.beachbuddy.WorkManager.BeachStatusWorker
 import com.example.beachbuddy.backend.BeachRepository
 import com.example.beachbuddy.data.Beach
+import com.example.beachbuddy.data.fallbackLocations
 import com.example.beachbuddy.data.room.BeachEntity
 import com.example.beachbuddy.data.room.BeachLocalDB
 import com.example.beachbuddy.databinding.FragmentMapBinding
 import com.example.beachbuddy.interfaces.FourSquareServices
 import com.example.beachbuddy.interfaces.MarineWeatherAPIService
 import com.example.beachbuddy.viewModels.BeachViewModel
+import com.example.beachbuddy.viewModels.FallbackViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -41,35 +51,33 @@ import com.google.android.gms.maps.model.MarkerOptions
 //import com.google.android.libraries.maps.model.AdvancedMarkerOptions
 
 
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.*
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 class FragmentMapContainer : Fragment(), OnMapReadyCallback {
 
     private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
-//    private lateinit var firestore : FirebaseFirestore
     private val beachViewModel: BeachViewModel by activityViewModels()
+    private val filterViewModel : FallbackViewModel by activityViewModels()
     private lateinit var googleMap: GoogleMap
+    private lateinit var filterLoc : LatLng
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var repository: BeachRepository
     private val beaches = mutableListOf<Beach>()
-
-//    private val defaultLocation = LatLng(19.19, 72.86)
-
     companion object {
         private const val TAG = "FRAGMENT_MAP_CONTAINER"
     }
 
-    private val locationPermissionLauncher = registerForActivityResult(
+    private val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         if (isGranted) {
             getCurrentLocationAndFetchBeaches()
         } else {
-            Toast.makeText(requireContext(), "Location Permission Denied", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Location or Notification Permission Denied", Toast.LENGTH_SHORT).show()
             Log.e(TAG,"Location Permission Denied")
         }
     }
@@ -95,8 +103,12 @@ class FragmentMapContainer : Fragment(), OnMapReadyCallback {
 //
 //        firestore = FirebaseFirestore.getInstance()
 
-
+        checkForNotificationPermission()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+        filterViewModel.beachList.observe(viewLifecycleOwner){location ->
+            filterLoc = LatLng(location.lat,location.lng)
+            getCurrentLocationAndFetchBeaches(filterLoc)
+        }
 
         val mapFragment = SupportMapFragment.newInstance()
         childFragmentManager.beginTransaction()
@@ -104,32 +116,52 @@ class FragmentMapContainer : Fragment(), OnMapReadyCallback {
             .commit()
         mapFragment.getMapAsync(this)
 
-        requireActivity().findViewById<BottomNavigationView>(R.id.home_screen_bottom_nav)?.let{ nav ->
-            binding.parentLayoutMapFragment.post {
-                val height = nav.height
-                binding.parentLayoutMapFragment.setPadding(binding.parentLayoutMapFragment.paddingLeft,binding.parentLayoutMapFragment.paddingTop,binding.parentLayoutMapFragment.paddingRight,height)
-            }
+//        requireActivity().findViewById<BottomNavigationView>(R.id.home_screen_bottom_nav)?.let{ nav ->
+//            binding.parentLayoutMapFragment.post {
+//                val height = nav.height
+//                binding.parentLayoutMapFragment.setPadding(binding.parentLayoutMapFragment.paddingLeft,binding.parentLayoutMapFragment.paddingTop,binding.parentLayoutMapFragment.paddingRight,height)
+//            }
 
 
-        }
 
         binding.centerMyLoc.setOnClickListener {
-            centerMyloc()
+            centerMyloc(filterLoc)
         }
     }
 
-    private fun centerMyloc() {
-        try {
+    private fun checkForNotificationPermission(){
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+            if (ActivityCompat.checkSelfPermission(
+                    requireContext(),
+                    android.Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                Toast.makeText(requireContext(), "Notification Permission Denied", Toast.LENGTH_SHORT).show()
+                permissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+
+
+    }
+
+    private fun centerMyloc(latLng : LatLng?=null) {
+        if(latLng == null){
+            try {
             fusedLocationClient.lastLocation.addOnSuccessListener {
                 if (it != null) {
-                    val latLng = LatLng(it.latitude, it.longitude)
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12f))
+                    val userLatLng = LatLng(it.latitude, it.longitude)
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng, 10f))
                 }
             }
         }catch(e:SecurityException){
             Log.e(TAG,"Center My Location Clicked But Failed!")
             Toast.makeText(requireContext(),"Security Exception Caught! ${e.message}",Toast.LENGTH_SHORT).show()
+        }}
+
+        else{
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,10f))
         }
+
 
     }
 
@@ -145,34 +177,43 @@ class FragmentMapContainer : Fragment(), OnMapReadyCallback {
             getCurrentLocationAndFetchBeaches()
             Toast.makeText(requireContext(), "Location Permission Granted", Toast.LENGTH_SHORT).show()
         } else {
-            locationPermissionLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
+            permissionLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
         }
     }
 
-    private fun getCurrentLocationAndFetchBeaches() {
+    private fun getCurrentLocationAndFetchBeaches(latLng: LatLng? = null) {
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
                 android.Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            locationPermissionLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
+            permissionLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
             return
         }
-
-        fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-            if (location != null) {
-                val latLng = LatLng(location.latitude, location.longitude)
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12f))
-                fetchNearbyBeaches(location.latitude, location.longitude)
-            } else {
-                Toast.makeText(requireContext(), "Couldn't access location. Showing default.", Toast.LENGTH_SHORT).show()
-                Log.e(TAG, "Couldn't access location.")
+        if(latLng == null){
+            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+                if (location != null) {
+                    val latLng = LatLng(location.latitude, location.longitude)
+                    filterLoc = latLng
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10f))
+                    fallbackLocations[0].lat = location.latitude
+                    fallbackLocations[0].lng = location.longitude
+                    fetchNearbyBeaches(location.latitude, location.longitude)
+                } else {
+                    Toast.makeText(requireContext(), "Couldn't access location. Showing default.", Toast.LENGTH_SHORT).show()
+                    Log.e(TAG, "Couldn't access location.")
+                }
+            }.addOnFailureListener {
+                Log.e(TAG, "Location failure: ${it.message}")
+                Toast.makeText(requireContext(), "Failed to get location", Toast.LENGTH_SHORT).show()
+                Log.e(TAG,"Failed to get location")
             }
-        }.addOnFailureListener {
-            Log.e(TAG, "Location failure: ${it.message}")
-            Toast.makeText(requireContext(), "Failed to get location", Toast.LENGTH_SHORT).show()
-            Log.e(TAG,"Failed to get location")
         }
+        else{
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10f))
+            fetchNearbyBeaches(latLng.latitude, latLng.longitude)
+        }
+
     }
 
 //    private fun moveToDefaultLocation() {
@@ -181,7 +222,6 @@ class FragmentMapContainer : Fragment(), OnMapReadyCallback {
 //    }
 
     private fun fetchNearbyBeaches(latitude: Double, longitude: Double) {
-        // Init Retrofit only once if needed
         val retrofitGoMaps = Retrofit.Builder()
             .baseUrl("https://places-api.foursquare.com/")
             .addConverterFactory(GsonConverterFactory.create())
@@ -210,7 +250,12 @@ class FragmentMapContainer : Fragment(), OnMapReadyCallback {
                 }
                 beachViewModel.setBeaches(beachList)
                 updateMap(beaches)
+//                val notificationHelper = NotificationCreator(requireContext())
+//                notificationHelper.showNotifications("BeachBuddy Notification","${beaches.size} Beaches Loaded!")
                 Log.e(TAG,"${beaches.size} beaches found")
+                if (beaches.size != 0){
+                    startPeriodicWork()
+                }
             } catch (e: Exception) {
                 showLoadingOverlay(false)
                 Log.e(TAG, "Failed to load beaches: ${e.message}")
@@ -239,5 +284,21 @@ class FragmentMapContainer : Fragment(), OnMapReadyCallback {
 
     fun showLoadingOverlay(show:Boolean){
         binding.loadingOverlay.isVisible=show
+    }
+
+    private fun startPeriodicWork(){
+        val workRequest = PeriodicWorkRequestBuilder<BeachStatusWorker>(1, TimeUnit.MINUTES)
+            .setConstraints(
+                Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                    .setRequiresCharging(false)
+                    .setRequiresBatteryNotLow(false)
+                    .build()
+            )
+
+        WorkManager.getInstance(requireContext())
+            .enqueueUniquePeriodicWork("Beach Status Work!",
+                ExistingPeriodicWorkPolicy.UPDATE, workRequest.build())
+
     }
 }

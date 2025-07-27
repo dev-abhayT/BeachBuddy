@@ -88,6 +88,7 @@
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
+
     <!-- Main Content -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -198,6 +199,17 @@
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/openMaps"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:layout_gravity="bottom"
+                android:elevation="10dp"
+                app:cornerRadius="12dp"
+                android:backgroundTint="@color/teal"
+                android:fontFamily="@font/montserrat_bold"
+                android:text="Open in Google Maps"/>
 
             <!-- Tab Layout -->
             <com.google.android.material.tabs.TabLayout

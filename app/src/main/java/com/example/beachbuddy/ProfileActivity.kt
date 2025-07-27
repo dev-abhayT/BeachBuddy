@@ -35,16 +35,16 @@ class ProfileActivity : AppCompatActivity() {
        val emailSharedPrefs = getSharedPreferences("UserEmail", MODE_PRIVATE)
         val email = emailSharedPrefs.getString("userEmail","")
 
-        val bottomNav = binding.profileScreenBottomNav
-        bottomNav.selectedItemId=R.id.profile
-        bottomNav.setOnItemSelectedListener {
-            when(it.itemId){
-                R.id.explore -> {
-                    finish()
-                    true
-                }
-                else -> false
-            }}
+//        val bottomNav = binding.profileScreenBottomNav
+//        bottomNav.selectedItemId=R.id.profile
+//        bottomNav.setOnItemSelectedListener {
+//            when(it.itemId){
+//                R.id.explore -> {
+//                    finish()
+//                    true
+//                }
+//                else -> false
+//            }}
 
         lifecycleScope.launch {
            try{

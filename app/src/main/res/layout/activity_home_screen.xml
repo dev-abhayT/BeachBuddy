@@ -9,31 +9,75 @@
      android:layout_width="match_parent"
      android:layout_height="wrap_content"
      android:background="@drawable/activity_splash_background">
-     <androidx.appcompat.widget.Toolbar
+     <androidx.constraintlayout.widget.ConstraintLayout
+
+         android:layout_height="wrap_content"
          android:layout_width="match_parent"
-         android:layout_height="match_parent">
+         android:orientation="vertical">
          <LinearLayout
              android:layout_width="wrap_content"
-             android:layout_height="match_parent"
-             android:layout_gravity="start">
+             android:layout_height="wrap_content"
+             android:orientation="horizontal"
+             app:layout_constraintRight_toRightOf="parent"
+             app:layout_constraintBottom_toBottomOf="parent"
+             app:layout_constraintTop_toTopOf="parent">
              <ImageView
+                 android:id="@+id/filter_btn"
                  android:layout_width="wrap_content"
                  android:layout_height="wrap_content"
-                 android:src="@drawable/ic_location"
-                 android:layout_gravity="center"
-                 android:layout_marginEnd="5dp"
-
-               />
-             <TextView
+                 android:src="@drawable/ic_filter"
+                 android:clickable="true"
+                 android:focusable="true"
+                 android:layout_margin="10dp"
+                 android:layout_weight="1"
+                 />
+             <ImageView
+                 android:id="@+id/logout_homescreen"
                  android:layout_width="wrap_content"
                  android:layout_height="wrap_content"
-                 android:text="BeachBuddy"
-                 android:layout_gravity="center"
-                 android:textSize="23sp"
-                 android:fontFamily="@font/poppins_semibold"
-                 android:textColor="@color/white"/>
+                 android:src="@drawable/ic_logout"
+                 android:layout_weight="1"
+                 android:layout_margin="10dp"/>
          </LinearLayout>
-     </androidx.appcompat.widget.Toolbar>
+
+
+         <androidx.appcompat.widget.Toolbar
+             android:id="@+id/header_toolbar"
+             android:layout_width="wrap_content"
+             app:layout_constraintLeft_toLeftOf="parent"
+             android:layout_height="match_parent"
+             app:layout_constraintTop_toTopOf="parent">
+
+             <LinearLayout
+                 android:layout_width="wrap_content"
+                 android:layout_height="match_parent"
+                 android:layout_marginEnd="10dp">
+                 <ImageView
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:src="@drawable/ic_location"
+                     android:layout_gravity="center"
+                     android:layout_marginEnd="5dp"
+
+                     />
+                 <TextView
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:text="BeachBuddy"
+                     android:layout_gravity="center"
+                     android:textSize="23sp"
+                     android:fontFamily="@font/poppins_semibold"
+                     android:textColor="@color/white"/>
+
+             </LinearLayout>
+         </androidx.appcompat.widget.Toolbar>
+
+
+
+
+
+     </androidx.constraintlayout.widget.ConstraintLayout>
+
  </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -47,22 +91,23 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            android:layout_above="@id/home_screen_bottom_nav"
+
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/home_tab_layout"
+            app:layout_constraintTop_toTopOf="parent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:elevation="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
             android:background="@drawable/input_field_bg"
             app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-            app:layout_constraintTop_toTopOf="parent"
             app:tabBackground="@drawable/tab_selector"
             app:tabIconTint="@drawable/tab_icon_colors"
             app:tabIndicatorHeight="0dp"
@@ -86,23 +131,25 @@
         </com.google.android.material.tabs.TabLayout>
 
 
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/home_screen_bottom_nav"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:background="@color/white"
 
-            app:itemIconTint="@drawable/bottom_nav_colors"
-            app:itemTextAppearanceActive="@style/TextAppearance.BottomNavigation.Active"
-            app:itemTextAppearanceInactive="@style/TextAppearance.BottomNavigation.Inactive"
-            app:itemTextColor="@drawable/bottom_nav_colors"
-            app:labelVisibilityMode="labeled"
 
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:menu="@menu/bottom_navigation_menu" />
+<!--        <com.google.android.material.bottomnavigation.BottomNavigationView-->
+<!--            android:id="@+id/home_screen_bottom_nav"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_gravity="bottom"-->
+<!--            android:background="@color/white"-->
+
+<!--            app:itemIconTint="@drawable/bottom_nav_colors"-->
+<!--            app:itemTextAppearanceActive="@style/TextAppearance.BottomNavigation.Active"-->
+<!--            app:itemTextAppearanceInactive="@style/TextAppearance.BottomNavigation.Inactive"-->
+<!--            app:itemTextColor="@drawable/bottom_nav_colors"-->
+<!--            app:labelVisibilityMode="labeled"-->
+
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintLeft_toLeftOf="parent"-->
+<!--            app:layout_constraintRight_toRightOf="parent"-->
+<!--            app:menu="@menu/bottom_navigation_menu" />-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
